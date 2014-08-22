@@ -4,6 +4,19 @@ require 'yaml'
  
 class SMTPGoogleMailer
   attr_accessor :smtp_info
+
+  def initialize(data)
+    # self.options = options
+
+    self.smtp_info = 
+      begin
+        YAML.load_file(data)
+      rescue
+        $stderr.puts "Could not find SMTP info"
+        exit -1
+      end
+
+  end
  
   def send_plain_email from, to, subject, body
     mailtext = <<EOF
@@ -77,38 +90,36 @@ EOF
   end
 end
  
-if __FILE__ == $0
-  puts ARGV.size
-  from = ARGV[1]
-  to = ARGV[2]
-  subject = ARGV[3]
-  body = ARGV[4]
-  attachment = ARGV[5]
-  smtp_info = 
-    begin
-      YAML.load_file(ARGV[0])
-    rescue
-      $stderr.puts "Could not find SMTP info"
-      exit -1
-    end
+# if __FILE__ == $0
+#   from = ARGV[1]
+#   to = ARGV[2]
+#   subject = ARGV[3]
+#   body = ARGV[4]
+#   attachment = ARGV[5]
+#   smtp_info = 
+#     begin
+#       YAML.load_file(ARGV[0])
+#     rescue
+#       $stderr.puts "Could not find SMTP info"
+#       exit -1
+#     end
  
-  mailer = SMTPGoogleMailer.new
-  mailer.smtp_info = smtp_info
+#   mailer = SMTPGoogleMailer.new
+#   mailer.smtp_info = smtp_info
  
-  if ARGV[4]
-    begin
-      mailer.send_attachment_email from, to, subject, body, attachment
-    rescue => e
-      puts ARGV.size
-      $stderr.puts "Something went wrong: #{e}"
-      exit -1
-    end
-  else
-    begin
-      mailer.send_plain_email from, to, subject, body
-    rescue => e
-      $stderr.puts "Something went wrong: #{e}"
-      exit -1
-    end
-  end
-end
+#   if ARGV[4]
+#     begin
+#       mailer.send_attachment_email from, to, subject, body, attachment
+#     rescue => e
+#       $stderr.puts "Something went wrong: #{e}"
+#       exit -1
+#     end
+#   else
+#     begin
+#       mailer.send_plain_email from, to, subject, body
+#     rescue => e
+#       $stderr.puts "Something went wrong: #{e}"
+#       exit -1
+#     end
+#   end
+# end

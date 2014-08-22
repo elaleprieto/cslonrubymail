@@ -1,8 +1,14 @@
 # encoding: utf-8
 require 'csv'
+# require 'smtp_google_mailer'
+require_relative 'smtp_google_mailer'
 
-archivo = 'inscripciones_ASISTENTES.csv'
-certificados_no_existentes = 0
+mailer = SMTPGoogleMailer.new "data.yaml"
+from = 'contacto@colectivolibre.com.ar'
+
+# archivo = 'inscripciones_ASISTENTES.csv'
+archivo = 'inscripciones_aux.csv'
+certificates_no_existentes = 0
 faltantes = []
 
 # CSV.open(archivo, 'r', ';') do |row|
@@ -10,30 +16,39 @@ faltantes = []
 # end
 
 CSV.foreach(archivo, quote_char: '"', col_sep: ',', row_sep: :auto, headers: false) do |row|
-  apellido = row[0]
-  nombre = row[1]
-  correo = row[2]
-  # usuario = correo.split('@')[0]
-  usuario = nombre.downcase.tr(' ','') + apellido.downcase.tr(' ', '')
-  certificado = "Certificado-#{usuario}.pdf"
+  lastname = row[0]
+  name = row[1]
+  email = row[2]
+  # user = email.split('@')[0]
+  user = name.downcase.tr(' ','') + lastname.downcase.tr(' ', '')
+  certificate = "Certificado-#{user}.pdf"
+  attachment = "certificados/#{certificate}"
 
-  if File.file?('certificados/' + certificado)
-  	puts "#{usuario} :: #{certificado} :: ¿existe? " + (File.file?('certificados/' + certificado)).to_s
+  subject = "Certificado de Asistencia"
+  message = "¡Hola #{name}!\n\n"
+  message += "Adjuntamos el certificado de asistencia a la Conferencia de Software Libre del Litoral.\n\n"
+  message += "¡Gracias por tu presencia!"
+
+  if File.file?(attachment)
+  	# puts "#{user} :: #{certificate} :: ¿existe? " + (File.file?('certificates/' + certificate)).to_s
+  	puts "Enviando certificado de #{user}"
+  	# mailer.send_attachment_email from, to, subject, body, attachment
+  	mailer.send_attachment_email from, email, subject, message, attachment
   else
-  	certificados_no_existentes += 1
-  	faltantes.push("#{apellido}, #{nombre}")
+  	certificates_no_existentes += 1
+  	faltantes.push("#{lastname}, #{name}")
   end
 end
 
-# Certificados faltantes
-if certificados_no_existentes > 0
+# certificates faltantes
+if certificates_no_existentes > 0
 	faltantes.each do|f|
 		puts "Falta: #{f}"
 	end 
 	
-	puts "\nCertificados no existentes: #{certificados_no_existentes}"
+	puts "\ncertificates no existentes: #{certificates_no_existentes}"
 else
-	puts "\nTodos los certificados fueron encontrados :)"
+	puts "\nTodos los certificates fueron encontrados :)"
 end
 
 puts ""
