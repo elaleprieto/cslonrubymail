@@ -1,6 +1,8 @@
 data.yaml
 email_sender.rb
 inscripciones_ASISTENTES.csv
+inscripciones_ASISTENTES.csv.old
 inscripciones_aux.csv
 smtp_google_mailer_old.rb
 certificados/
+certificados-old/
