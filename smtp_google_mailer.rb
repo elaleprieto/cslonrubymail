@@ -1,13 +1,10 @@
 require 'net/smtp'
-# require 'tlsmail'
 require 'yaml'
  
 class SMTPGoogleMailer
   attr_accessor :smtp_info
 
   def initialize(data)
-    # self.options = options
-
     self.smtp_info = 
       begin
         YAML.load_file(data)
@@ -50,10 +47,11 @@ EOF
  
     # Define the message action
     part2 =<<EOF
-Content-Type: text/plain
+Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding:8bit
  
 #{body}
+<img src="https://www.dropbox.com/s/smxptzkzboz6wt7/banner.jpg?dl=1" />
 --#{marker}
 EOF
  
@@ -76,10 +74,8 @@ EOF
  
   def send_email from, to, mailtext
     begin 
-      # Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
       smtp = Net::SMTP.new  @smtp_info[:smtp_server], @smtp_info[:port]
       smtp.enable_starttls
-      # Net::SMTP.start(@smtp_info[:smtp_server], @smtp_info[:port], @smtp_info[:helo], @smtp_info[:username], @smtp_info[:password], @smtp_info[:authentication]) do |smtp|
       smtp.start(@smtp_info[:helo], @smtp_info[:username], @smtp_info[:password], @smtp_info[:authentication]) do |smtp|
         smtp.send_message mailtext, from, to
       end
@@ -89,37 +85,3 @@ EOF
     end  
   end
 end
- 
-# if __FILE__ == $0
-#   from = ARGV[1]
-#   to = ARGV[2]
-#   subject = ARGV[3]
-#   body = ARGV[4]
-#   attachment = ARGV[5]
-#   smtp_info = 
-#     begin
-#       YAML.load_file(ARGV[0])
-#     rescue
-#       $stderr.puts "Could not find SMTP info"
-#       exit -1
-#     end
- 
-#   mailer = SMTPGoogleMailer.new
-#   mailer.smtp_info = smtp_info
- 
-#   if ARGV[4]
-#     begin
-#       mailer.send_attachment_email from, to, subject, body, attachment
-#     rescue => e
-#       $stderr.puts "Something went wrong: #{e}"
-#       exit -1
-#     end
-#   else
-#     begin
-#       mailer.send_plain_email from, to, subject, body
-#     rescue => e
-#       $stderr.puts "Something went wrong: #{e}"
-#       exit -1
-#     end
-#   end
-# end
