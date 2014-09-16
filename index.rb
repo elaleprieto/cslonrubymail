@@ -22,9 +22,10 @@ CSV.foreach(archivo, quote_char: '"', col_sep: ',', row_sep: :auto, headers: fal
   message = "<p>¡Hola #{name}!</p>"
   message += "<p>Adjuntamos el certificado de asistencia a la Conferencia de Software Libre del Litoral.</p>"
   message += "<p>¡Gracias por tu presencia!</p>"
+  message.force_encoding("ASCII-8BIT") # fuerza el encoding y evita el warning: regexp match /.../n against to UTF-8 string
 
   if File.file?(attachment)
-  	puts "Enviando certificado de #{user}"
+    puts "Enviando certificado de #{user}"
   	mailer.send_attachment_email from, email, subject, message, attachment
   else
   	certificates_no_existentes += 1
