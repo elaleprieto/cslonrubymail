@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'csv'
-require_relative 'smtp_google_mailer'
+# require_relative 'smtp_google_mailer'
+require_relative 'mail_mikel'
 
 mailer = SMTPGoogleMailer.new "data.yaml"
 from = '"Colectivo Libre" \<contacto@colectivolibre.com.ar\>'

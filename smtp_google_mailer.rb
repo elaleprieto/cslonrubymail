@@ -66,6 +66,7 @@ Content-Disposition: attachment; filename="#{File.basename(attachment)}"
 EOF
  
     mailtext = part1 + part2 + part3
+    mailtext.force_encoding("ASCII-8BIT")
  
     send_email from, to, mailtext
   end
