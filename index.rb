@@ -23,6 +23,7 @@ CSV.foreach(archivo, quote_char: '"', col_sep: ',', row_sep: :auto, headers: fal
   message = "<p>¡Hola #{name}!</p>"
   message += "<p>Adjuntamos el certificado de asistencia a la Conferencia de Software Libre del Litoral.</p>"
   message += "<p>¡Gracias por tu presencia!</p>"
+  message += '<img src="https://www.dropbox.com/s/smxptzkzboz6wt7/banner.jpg?dl=1" />'
   message.force_encoding("ASCII-8BIT") # fuerza el encoding y evita el warning: regexp match /.../n against to UTF-8 string
 
   if File.file?(attachment)
